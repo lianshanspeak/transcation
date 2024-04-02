@@ -21,8 +21,12 @@ class AceStrategy(bt.Strategy):
         self.sma_5 = bt.indicators.SimpleMovingAverage(
             self.datas[0], period=self.params.maperiod_5)
         self.order = None
-        # self.sma_3.plotinfo.plot = False
-        # self.sma_5.plotinfo.plot = False
+        # 上窜了就是1，其余就是0
+        self.买入条件 = bt.indicators.CrossOver(self.sma_3,self.sma_5)
+        self.卖出条件 = bt.indicators.CrossDown(self.sma_3,self.sma_5)
+        self.买入条件.plotinfo.plot = False
+        self.卖出条件.plotinfo.plot = False
+
 
     def start(self):
         pass
@@ -44,15 +48,20 @@ class AceStrategy(bt.Strategy):
     #     self.order = None # 无挂起
 
     def next(self):
+        # 有无持仓,这里的1000是1000股
         # if self.order:
         #     return
         if not self.position:
-            if self.sma_3[0]>self.sma_5[0]:
-                self.order = self.buy(size=1000)
+            if self.买入条件>0:
+                self.order =self.buy(size=1000)
+            # if self.sma_3[0]>self.sma_5[0]:
+            #     self.order = self.buy(size=1000)
                 print(f"{self.datas[0].datetime.date(0)},买入！价格为{self.dataclose[0]}")
         else:
-            if self.sma_3[0]<self.sma_5[0]:
+            if self.卖出条件>0:
                 self.order = self.sell(size=1000)
+            # if self.sma_3[0]<self.sma_5[0]:
+            #     self.order = self.sell(size=1000)
                 print(f"{self.datas[0].datetime.date(0)},卖出！价格为{self.dataclose[0]}")
 
     def stop(self):
@@ -62,24 +71,26 @@ class AceStrategy(bt.Strategy):
 if __name__ == '__main__':
     cerebro = bt.Cerebro()
     cerebro.broker.set_cash(100000.00)  # 设置初始资金金额
+    #     设置手续费
+    cerebro.broker.setcommission(0.0001)
     cerebro = bt.Cerebro(stdstats=False)
-    cerebro.addobserver(bt.observers.Broker)
-    # cerebro.addobserver(bt.observers.Trades)
-    cerebro.addobserver(bt.observers.BuySell)
+    # cerebro.addobserver(bt.observers.Broker)
+    cerebro.addobserver(bt.observers.Trades) #展示蓝点红点，盈利的离中线多远
+    cerebro.addobserver(bt.observers.BuySell) #买卖信号
     # cerebro.addobserver(bt.observers.DrawDown)
-    cerebro.addobserver(bt.observers.Value)
+    cerebro.addobserver(bt.observers.Value) #价值曲线
     # cerebro.addobserver(bt.observers.TimeReturn)
     初始资金 = cerebro.broker.getvalue()
     print(f'初始资金:{初始资金}')
-    数据地址= os.path.join(os.path.join(os.getcwd(),"数据地址"),"002342.csv") #本次是单个，未来可以用循环遍历，列表表达式用if 过滤CSV
-    # print(数据地址)
+    数据地址= os.path.join(os.path.join(os.getcwd(),"数据地址"),"002388.csv") #本次是单个，未来可以用循环遍历，列表表达式用if 过滤CSV
+    print(数据地址)
     data =pd.read_csv(数据地址)
     data.index=pd.to_datetime(data.date)
     data.drop(columns=["date"],inplace=True)
     # print(data)
     日线 = bt.feeds.PandasData(     dataname=data,
-                                    fromdate=datetime.datetime(2020, 1, 1),
-                                    todate=datetime.datetime(2020, 10, 12)
+                                    fromdate=datetime.datetime(2022, 10, 28),
+                                    todate=datetime.datetime(2023, 10, 20)
                                     )
     cerebro.adddata(日线)
     cerebro.addstrategy(AceStrategy)

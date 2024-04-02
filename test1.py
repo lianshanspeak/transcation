@@ -26,6 +26,7 @@ class TestStrategy(bt.Strategy):
         self.buyprice = None
         self.buycomm = None
 
+    # 记录订单状态
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
             # Buy/Sell order submitted/accepted to/by broker - Nothing to do
@@ -55,7 +56,7 @@ class TestStrategy(bt.Strategy):
             self.log('Order Canceled/Margin/Rejected')
 
         self.order = None
-
+    # 交易状态，牟利盈利率
     def notify_trade(self, trade):
         if not trade.isclosed:
             return
@@ -126,7 +127,7 @@ if __name__ == '__main__':
     cerebro.broker.setcash(1000000.0)
 
     # Set the commission - 0.1% ... divide by 100 to remove the %
-    cerebro.broker.setcommission(commission=0.001)
+    cerebro.broker.setcommission(commission=0.0001)
 
     # Print out the starting conditions
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
