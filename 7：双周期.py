@@ -61,24 +61,25 @@ class AceStrategy(bt.Strategy):
     def stop(self):
         if  self.position:
             self.order = self.sell(size=1000)
-            print(f"{self.datas[0].datetime.date(0)},卖出！价格为{self.data.close[0]}")
+            print(f"{self.datas[0].datetime.date(0)},卖出！价格为{self.data.close[0]},最终数据{cerebro.broker.getvalue()}")
 
 
 if __name__ == '__main__':
     cerebro = bt.Cerebro()
     cerebro.broker.set_cash(100000.0)
-    数据地址= os.path.join(os.path.join(os.getcwd(),"数据地址"),"002342_30M.csv")
+    数据地址= os.path.join(os.path.join(os.getcwd(),"数据地址"),"002388.csv")
     data = pd.read_csv(数据地址,index_col = "date",parse_dates=True)
     print(data)
     三十分钟线 = bt.feeds.PandasData(dataname=data,
-                                fromdate = datetime.datetime(2020,3,1),
-                                todate = datetime.datetime(2020,10,16),
+                                fromdate = datetime.datetime(2022,3,1),
+                                todate = datetime.datetime(2023,10,16),
                                 timeframe = bt.TimeFrame.Minutes,
                                 compression = 30
                              )
     cerebro.adddata(三十分钟线) #self.data
     cerebro.resampledata(三十分钟线,timeframe = bt.TimeFrame.Days)   #self.data1
     cerebro.addstrategy(AceStrategy)
+
     cerebro.run()
     期末资金 = cerebro.broker.getvalue()
     print(f'期末资金:{期末资金}')

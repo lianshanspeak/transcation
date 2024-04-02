@@ -126,7 +126,7 @@ if __name__ == '__main__':
     cerebro.broker.setcash(1000000.0)
 
     # Set the commission - 0.1% ... divide by 100 to remove the %
-    cerebro.broker.setcommission(commission=0.001)
+    cerebro.broker.setcommission(commission=0.0001)
 
     # Print out the starting conditions
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
