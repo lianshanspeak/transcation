@@ -237,3 +237,14 @@ if not self.position:有无持仓
         self.买入条件.plotinfo.plot = False
         self.卖出条件.plotinfo.plot = False
 ```
+
+
+
+
+
+### 5.第一个指标
+
+五日突破就买入，跌破就卖出
+
+
+
