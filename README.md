@@ -248,3 +248,32 @@ if not self.position:有无持仓
 
 
 
+### 6.双周期
+
+30分钟突破上轨买入，30分钟突破下轨卖出
+
+需要下载30分钟数据和日线数据
+
+![image-20240410000325428](image/image-20240410000325428.png)
+
+30分钟数据下载方式
+
+使用分钟为30分钟
+
+```
+timeframe = bt.TimeFrame.Minutes,                                compression = 30
+```
+
+把30分钟线变为日线
+
+```
+cerebro.resampledata(三十分钟线,timeframe = bt.TimeFrame.Days)   #self.data1
+
+```
+
+一定要加上括号，变成函数方法
+
+```
+        self.上下轨 = self.上下轨()
+```
+

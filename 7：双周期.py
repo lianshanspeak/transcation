@@ -28,7 +28,7 @@ class AceStrategy(bt.Strategy):
         self.上下轨 = Platform(self.data1 ,周期= self.params.周期)
         self.上下轨 = self.上下轨()
         self.上下轨.plotinfo.plotmaster = self.data0
-
+        # 30分钟的收盘价要上穿上轨，和30分钟收盘价下穿下轨
         self.买入信号 = bt.indicators.CrossOver(self.data0.close,self.上下轨.上轨)
         self.卖出信号 = bt.indicators.CrossDown(self.data0.close,self.上下轨.下轨)
         self.买入信号.plotinfo.plot = False
